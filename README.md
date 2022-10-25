@@ -2,7 +2,7 @@
 
 This is a simple python package by using pymodbus to be able to access registers of ZLAC8015D.
 
-You can find more detail of ZLAC8015D on their official site [here](http://www.zlrobotmotor.com/info/401.html).
+You can find more detail of ZLAC8015D on their official site [here](http://www.zlrobotmotor.com/info/401.html) or about [ZLAC8015](http://www.zlrobotmotor.com/info/400.html)
 
 ## Hardware
 
