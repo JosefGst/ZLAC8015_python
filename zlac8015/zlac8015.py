@@ -2,6 +2,9 @@
 from pymodbus.client import ModbusSerialClient as ModbusClient
 import numpy as np
 
+def function():
+    print("hello world")
+
 class Controller:
 
 	def __init__(self, port="/dev/ttyUSB0"):
