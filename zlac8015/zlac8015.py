@@ -7,7 +7,7 @@ def function():
 
 class Controller:
 
-	def __init__(self, port="/dev/ttyUSB0"):
+	def __init__(self, port="/dev/ttyUSB0", ID=1):
 
 		self._port = port
 
@@ -15,7 +15,7 @@ class Controller:
 
 		self.client.connect()
 
-		self.ID = 1
+		self.ID = ID
 
 		######################
 		## Register Address ##
@@ -43,10 +43,8 @@ class Controller:
 		self.R_CMD_REL_POS_HI = 0x208C
 		self.R_CMD_REL_POS_LO = 0x208D
 
-		self.L_FB_POS_HI = 0x20A7
-		self.L_FB_POS_LO = 0x20A8
-		self.R_FB_POS_HI = 0x20A9
-		self.R_FB_POS_LO = 0x20AA
+		self.L_FB_POS_HI = 0x202A
+		self.L_FB_POS_LO = 0x202B
 
 		## Troubleshooting
 		self.L_FAULT = 0x20A5
@@ -300,32 +298,31 @@ class Controller:
 		# 		# print("error")
 		# 		pass
 
-		registers = self.modbus_fail_read_handler(self.L_FB_POS_HI, 4)
+		registers = self.modbus_fail_read_handler(self.L_FB_POS_HI, 2)
 		l_pul_hi = registers[0]
 		l_pul_lo = registers[1]
-		r_pul_hi = registers[2]
-		r_pul_lo = registers[3]
 
 		l_pulse = np.int32(((l_pul_hi & 0xFFFF) << 16) | (l_pul_lo & 0xFFFF))
-		r_pulse = np.int32(((r_pul_hi & 0xFFFF) << 16) | (r_pul_lo & 0xFFFF))
 		l_travelled = (float(l_pulse)/self.cpr)*self.travel_in_one_rev  # unit in meter
-		r_travelled = (float(r_pulse)/self.cpr)*self.travel_in_one_rev  # unit in meter
 
-		return l_travelled, r_travelled
+		return l_travelled
 
 
 
 if __name__ == "__main__":
 	import time
 
-	motors = Controller(port="/dev/ttyUSB0")
+	motors = Controller(port="/dev/ttyUSB0",ID=2)
 	motors.disable_motor()
 	motors.set_accel_time(1000)
 	motors.set_decel_time(1000)
 
+	l_meter_init = motors.get_wheels_travelled()
+	print(l_meter_init)
+
 	motors.set_mode(3)
 	motors.enable_motor()
-	motors.set_rpm(150)
+	motors.set_rpm(-50)
 
 	last_time = time.time()
 	while True:
