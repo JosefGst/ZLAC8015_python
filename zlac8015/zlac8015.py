@@ -115,7 +115,7 @@ class Controller:
 		return reg
 
 	def rpm_to_radPerSec(self, rpm):
-		return rpm*2*np.pi/60.0
+		return rpm*0.10471975512 #*2*np.pi/60.0
 
 	def radPerSec_to_rpm(self, radPerSec):
 		return radPerSec*9.54929658551 #/(2*np.pi)*60.0
@@ -225,12 +225,11 @@ class Controller:
 
 	def get_linear_velocities(self):
 
-		rpmL, rpmR = self.get_rpm()
+		rpmL = self.get_rpm()
 
 		VL = self.rpm_to_linear(rpmL)
-		VR = self.rpm_to_linear(-rpmR)
 
-		return VL, VR
+		return VL
 
 	def map(self, val, in_min, in_max, out_min, out_max):
 
