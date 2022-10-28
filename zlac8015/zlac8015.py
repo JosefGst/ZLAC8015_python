@@ -93,9 +93,9 @@ class Controller:
 		## Odometry ##
 		##############
 		## 8 inches wheel
-		self.travel_in_one_rev = 0.655
-		self.cpr = 16385
-		self.R_Wheel = 0.105 #meter
+		self.travel_in_one_rev = 0.6283
+		self.cpr = 4096  #4186 4095 4087 41003
+		self.R_Wheel = 0.100 #meter
 
 	## Some time if read immediatly after write, it would show ModbusIOException when get data from registers
 	def modbus_fail_read_handler(self, ADDR, WORD):
@@ -116,6 +116,9 @@ class Controller:
 
 	def rpm_to_radPerSec(self, rpm):
 		return rpm*2*np.pi/60.0
+
+	def radPerSec_to_rpm(self, radPerSec):
+		return radPerSec*9.54929658551 #/(2*np.pi)*60.0
 
 	def rpm_to_linear(self, rpm):
 
@@ -303,6 +306,7 @@ class Controller:
 		l_pul_lo = registers[1]
 
 		l_pulse = np.int32(((l_pul_hi & 0xFFFF) << 16) | (l_pul_lo & 0xFFFF))
+		# print(l_pulse)
 		l_travelled = (float(l_pulse)/self.cpr)*self.travel_in_one_rev  # unit in meter
 
 		return l_travelled
@@ -321,8 +325,8 @@ if __name__ == "__main__":
 	print(l_meter_init)
 
 	motors.set_mode(3)
-	motors.enable_motor()
-	motors.set_rpm(-50)
+	# motors.enable_motor()
+	# motors.set_rpm(-50)
 
 	last_time = time.time()
 	while True:
@@ -330,9 +334,12 @@ if __name__ == "__main__":
 			period = time.time() - last_time
 			last_time = time.time()
 
-			rpmL = motors.get_rpm()
+			l_meter_init = motors.get_wheels_travelled()
+			print(l_meter_init)
 
-			print("period: {:.4f} rpmL: {:.1f}".format(period,rpmL[0]))
+			# rpmL = motors.get_rpm()
+
+			# print("period: {:.4f} rpmL: {:.1f}".format(period,rpmL[0]))
 			# print(rpmL)
 			time.sleep(0.01)
 				
