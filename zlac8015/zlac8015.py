@@ -2,9 +2,6 @@
 from pymodbus.client import ModbusSerialClient as ModbusClient
 import numpy as np
 
-def function():
-    print("hello world")
-
 class Controller:
 
 	def __init__(self, port="/dev/ttyUSB0", ID=1):
@@ -96,6 +93,7 @@ class Controller:
 		self.travel_in_one_rev = 0.6283
 		self.cpr = 4096  #4186 4095 4087 41003
 		self.R_Wheel = 0.100 #meter
+		self.meter_init = self.get_wheels_travelled()
 
 	## Some time if read immediatly after write, it would show ModbusIOException when get data from registers
 	def modbus_fail_read_handler(self, ADDR, WORD):
@@ -309,6 +307,12 @@ class Controller:
 		l_travelled = (float(l_pulse)/self.cpr)*self.travel_in_one_rev  # unit in meter
 
 		return l_travelled
+
+	def get_delta_wheel_travelled(self):
+		wheel_travelled = self.get_wheels_travelled()
+		d_meter = wheel_travelled - self.meter_init
+		self.meter_init = wheel_travelled
+		return d_meter
 
 
 
