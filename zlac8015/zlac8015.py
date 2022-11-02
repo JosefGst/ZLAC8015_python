@@ -27,7 +27,10 @@ class Controller:
 		self.L_CMD_RPM = 0x203A
 		self.R_CMD_RPM = 0x2089
 		self.L_FB_RPM = 0x202C
-		self.R_FB_RPM = 0x20AC
+
+		self.SPEED_kp = 0x201D
+		self.SPEED_ki = 0x201E
+		self.SPEED_kf = 0x201F
 
 		## Position control
 		self.POS_CONTROL_TYPE = 0x200F
@@ -188,6 +191,16 @@ class Controller:
 
 		result = self.client.write_registers(self.L_DCL_TIME, int(L_ms), slave=self.ID)
 
+	def set_speed_PID(self, kp, ki, kf):
+		'''set PID, kp->proportional gain, ki->integral, kf->forward gain'''
+		kp = self.limit(kp,0,3000)
+		ki = self.limit(kp,0,3000)
+		kf = self.limit(kp,0,3000)
+
+		self.client.write_registers(self.SPEED_kp, int(kp), slave=self.ID)
+		self.client.write_registers(self.SPEED_ki, int(ki), slave=self.ID)
+		self.client.write_registers(self.SPEED_kf, int(kf), slave=self.ID)
+
 	def int16Dec_to_int16Hex(self,int16):
 
 		lo_byte = (int16 & 0x00FF)
@@ -313,6 +326,13 @@ class Controller:
 		d_meter = wheel_travelled - self.meter_init
 		self.meter_init = wheel_travelled
 		return d_meter
+
+	def limit(self, input, min, max):
+		if input > max:
+			input = max
+		elif input < min:
+			input = min
+		return input
 
 
 
