@@ -23,7 +23,8 @@ Along with the driver, you will need to have RS485-USB converter to plug it on y
 ## For python2
 sudo pip install pymodbus
 ## or python3
-sudo pip3 install pymodbus
+pip3 install pymodbus
+pip3 install serial_asyncio
 
 #2. Install this package
 ## For python2
