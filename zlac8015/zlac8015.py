@@ -339,17 +339,19 @@ class Controller:
 if __name__ == "__main__":
 	import time
 
-	motors = Controller(port="/dev/ttyUSB0",ID=2)
+	motors = Controller(port="/dev/zlac",ID=2)
 	motors.disable_motor()
 	motors.set_accel_time(1000)
 	motors.set_decel_time(1000)
+
+	motors.set_speed_PID(300,100,1000)
 
 	l_meter_init = motors.get_wheels_travelled()
 	print(l_meter_init)
 
 	motors.set_mode(3)
-	# motors.enable_motor()
-	# motors.set_rpm(-50)
+	motors.enable_motor()
+	motors.set_rpm(-50)
 
 	last_time = time.time()
 	while True:
@@ -358,12 +360,12 @@ if __name__ == "__main__":
 			last_time = time.time()
 
 			l_meter_init = motors.get_wheels_travelled()
-			print(l_meter_init)
+			# print(l_meter_init)
 
-			# rpmL = motors.get_rpm()
+			rpmL = motors.get_rpm()
 
 			# print("period: {:.4f} rpmL: {:.1f}".format(period,rpmL[0]))
-			# print(rpmL)
+			print(rpmL)
 			time.sleep(0.01)
 				
 
